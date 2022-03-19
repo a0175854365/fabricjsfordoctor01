@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FabricJS ::: Free drawing</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/521/fabric.js"></script>
+
+    <style>
+        canvas {
+            border: solid 1px gray;
+        }
+
+        .insert_object {
+            border: solid 1px gray;
+            width: 80px;
+            height: 60px;
+        }
+
+        img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+    </style>
+</head>
+
+<body onload="init();">
+
+    <div>
+        <h2>FabricJS ::: Free drawing</h2>
+        
+        <div><b>그리기 옵션</b></div>
+        <div class="section">
+            <div>
+                <label for="drawing-line-width">선 굵기:</label>
+                <span>1</span><input type="range" value="1" min="1" max="10" id="drawing-line-width">
+                <label for="drawing-color">색상:</label>
+                <input type="color" value="#000000" id="drawing-color">
+            </div>
+        </div>
+
+        <div><b>오브젝트 관리</b></div>
+        <div class="section">
+            <div>
+                <button onclick="removeSelected();">선택 삭제</button>
+                <button onclick="removeAll();">전체 삭제</button>
+            </div>
+        </div>        
+
+        <div><b>삽입</b></div>
+        <div class="section flex">
+            <div class="insert_object">
+                <img onclick="addImage(this.src, 0.2);" src="assets/images/pug2.jpeg" />
+            </div>
+            <div class="insert_object">
+                <img onclick="addImage(this.src, 0.2);" src="assets/images/pug3.webp" />
+            </div>
+            <div class="insert_object">
+                <img onclick="addImage(this.src, 1.0);" src="assets/images/hamster.jpeg" />
+            </div>
+            <div class="insert_object">
+                <button class="insert_object" onclick="addText();" ?>입력 상자</button>
+            </div>
+        </div>
+
+        <div class="flex">
+            <div><b id="drawing-mode-text">그리기 모드</b></div>
+            <div><button id="drawing-mode">선택 모드로 변경</button></div>
+        </div>
+        <div class="section">
+            <div>
+                <canvas id="c" width="600" height="400"></canvas>
+            </div>
+        </div>
+
+        <div class="section">
+            <b>Refer</b>
+            <div>
+                <a href="http://fabricjs.com/freedrawing">http://fabricjs.com/freedrawing</a>
+            </div>
+            <div>
+                <a href="http://fabricjs.com/kitchensink">http://fabricjs.com/kitchensink</a>
+            </div>
+        </div>
+
+    </div>
+
+    <script id="main">
+
+        // ID SELECTOR
+        let $ = function (id) { return document.getElementById(id) };
+
+        // fabric canvas 생성
+        let canvas = new fabric.Canvas('c', {
+            isDrawingMode: true
+        });
+
+        // 초기화
+        function init() {
+
+            // 요소 검출
+            let drawingModeEl = $('drawing-mode');
+            let drawingModeText = $('drawing-mode-text');
+            let drawingColorEl = $('drawing-color');
+            let drawingLineWidthEl = $('drawing-line-width');
+
+            // 그리시/선택 모드 변경
+            drawingModeEl.onclick = function () {
+                canvas.isDrawingMode = !canvas.isDrawingMode;
+                if (canvas.isDrawingMode) {
+                    drawingModeEl.innerHTML = '선택 모드로 변경';
+                    drawingModeText.innerHTML = '그리기 모드';
+                }
+                else {
+                    drawingModeEl.innerHTML = '그리기 모드로 변경';
+                    drawingModeText.innerHTML = '선택 모드';
+                }
+            };
+
+            // 색상 변경 
+            drawingColorEl.onchange = function () {
+                let brush = canvas.freeDrawingBrush;
+                console.log(this.value);
+                brush.color = this.value;
+                if (brush.getPatternSrc) {
+                    brush.source = brush.getPatternSrc.call(brush);
+                }
+            };
+
+            // 굵기 변경 
+            drawingLineWidthEl.onchange = function () {
+                canvas.freeDrawingBrush.width = parseInt(this.value, 10) || 1;
+                this.previousSibling.innerHTML = this.value;
+            };
+        }
+
+        // 이미지 추가
+        function addImage(path, scale) {
+            fabric.Image.fromURL(path, function (image) {
+                image.set({
+                    left: 100,
+                    top: 100,
+                    angle: 0
+                }).scale(scale)
+                canvas.add(image);
+            });
+        }
+
+        // 텍스트 추가 
+        function addText() {
+            let text = new fabric.IText("선택 모드로 변경 후 여기에 입력하세요.",
+                {
+                    fontSize: 18,
+                    top: 100,
+                    left: 100
+                });
+            canvas.add(text);
+        }
+
+        // 전체 오브젝트 삭제
+        function removeAll() {
+            canvas.clear();
+        }
+
+        // 선택된 오브젝트 삭제
+        function removeSelected() {
+            var activeObjects = canvas.getActiveObjects();
+            canvas.discardActiveObject()
+            if (activeObjects.length) {
+                canvas.remove.apply(canvas, activeObjects);
+            }
+        }
+
+    </script>
+
+</body>
+
+</html>
