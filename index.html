@@ -50,15 +50,7 @@
             </div>
         </div>
 
-        <div><b>오브젝트 관리</b></div>
-        <div class="section">
-            <div>
-                <button onclick="removeSelected();">선택 삭제</button>
-                <button onclick="removeAll();">전체 삭제</button>
-            </div>
-        </div>        
-
-        <div><b>삽입</b></div>
+        <div><b>오브젝트 추가</b></div>
         <div class="section flex">
             <div class="insert_object">
                 <img onclick="addImage(this.src, 0.2);" src="assets/images/pug2.jpeg" />
@@ -73,6 +65,14 @@
                 <button class="insert_object" onclick="addText();" ?>입력 상자</button>
             </div>
         </div>
+
+        <div><b>오브젝트 삭제</b></div>
+        <div class="section">
+            <div>
+                <button onclick="removeSelected();">선택 삭제</button>
+                <button onclick="removeAll();">전체 삭제</button>
+            </div>
+        </div>        
 
         <div class="flex">
             <div><b id="drawing-mode-text">그리기 모드</b></div>
